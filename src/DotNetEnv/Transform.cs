@@ -39,8 +39,7 @@ public class TruthyCheck
             {
                 new FundingItem
                 {
-                    FundType = "Grant",
-                    FundAmount = 1000.00m,
+                    FundType = "Grant",FundAmount = 1000.00m,
                     SourceDescription = "Government Grant",
                     CreatedDate = DateTime.Now,
                     ProjectNameFrom = "Project A",
