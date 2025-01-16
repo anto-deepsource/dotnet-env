@@ -7,7 +7,7 @@ public static class DecimalExtensions
     public static string ToCurrency(this decimal amount)
     {
         // Dummy implementation for converting decimal to currency string
-        return amount.ToString("C");
+        return amount.ToString("C" );
     }
 }
 
@@ -61,7 +61,7 @@ public class TruthyCheck
                 .Replace("$$FundingDescription$$", item.SourceDescription)
                 .Replace("$$FundingDate$$", item.CreatedDate.ToString("d"))
                 .Replace("$$FundingTransferFrom$$", item.ProjectNameFrom)
-                .Replace("$$FundingTransferReason$$", item.TransferReason)}");
+                .Replace("$$FundingTransferReason$$", item.TransferReason)} ");
         }
 
         // Output the result for debugging
