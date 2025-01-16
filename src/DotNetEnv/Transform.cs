@@ -61,10 +61,11 @@ public class TruthyCheck
                 .Replace("$$FundingDescription$$", item.SourceDescription)
                 .Replace("$$FundingDate$$", item.CreatedDate.ToString("d"))
                 .Replace("$$FundingTransferFrom$$", item.ProjectNameFrom)
-                .Replace("$$FundingTransferReason$$", item.TransferReason)}");
+                .Replace("$$FundingTransferReason$$", item.TransferReason)}
+        ");
         }
 
-        // Output the result for debugging
-        Console.WriteLine(fundingRows.ToString());
+    // Output the result for debugging
+    Console.WriteLine(fundingRows.ToString());
     }
 }
