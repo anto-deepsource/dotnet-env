@@ -64,7 +64,7 @@ public class TruthyCheck
                 .Replace("$$FundingTransferReason$$", item.TransferReason)}");
         }
 
-        // Output the result for debugging
-        Console.WriteLine(fundingRows.ToString());
+    // Output the result for debugging
+    Console.WriteLine(fundingRows.ToString());
     }
 }
