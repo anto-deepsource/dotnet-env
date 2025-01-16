@@ -7,7 +7,7 @@ public static class DecimalExtensions
     public static string ToCurrency(this decimal amount)
     {
         // Dummy implementation for converting decimal to currency string
-        return amount.ToString("C" );
+        return amount.ToString("C");
     }
 }
 
