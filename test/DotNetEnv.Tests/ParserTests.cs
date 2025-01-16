@@ -19,10 +19,10 @@ namespace DotNetEnv.Tests
         private const string EV_TEST_1 = "EV_TEST_1";
         private const string EV_TEST_2 = "EV_TEST_2";
 
-        private Dictionary<string,string> oldEnvvars = new Dictionary<string,string>();
+        private Dictionary<string, string> oldEnvvars = new Dictionary<string, string>();
         private static readonly string[] ALL_EVS = { EV_TEST, EV_DNE, EV_TEST_1, EV_TEST_2 };
 
-        public ParserTests ()
+        public ParserTests()
         {
             foreach (var ev in ALL_EVS)
             {
@@ -32,7 +32,7 @@ namespace DotNetEnv.Tests
             Environment.SetEnvironmentVariable(EV_TEST, "ENV value");
         }
 
-        public void Dispose ()
+        public void Dispose()
         {
             foreach (var ev in ALL_EVS)
             {
@@ -41,7 +41,7 @@ namespace DotNetEnv.Tests
         }
 
         [Fact]
-        public void ParseIdentifier ()
+        public void ParseIdentifier()
         {
             Assert.Equal("name", Parsers.Identifier.End().Parse("name"));
             Assert.Equal("_n", Parsers.Identifier.End().Parse("_n"));
@@ -62,7 +62,7 @@ namespace DotNetEnv.Tests
         }
 
         [Fact]
-        public void ParseOctalByte ()
+        public void ParseOctalByte()
         {
             Assert.Equal(33, Parsers.OctalByte.End().Parse(@"\41"));
             Assert.Equal(33, Parsers.OctalByte.End().Parse(@"\041"));
@@ -74,7 +74,7 @@ namespace DotNetEnv.Tests
         }
 
         [Fact]
-        public void ParseOctalChar ()
+        public void ParseOctalChar()
         {
             Assert.Equal("!", Parsers.OctalChar.End().Parse(@"\41"));
             Assert.Equal("!", Parsers.OctalChar.End().Parse(@"\041"));
@@ -86,13 +86,13 @@ namespace DotNetEnv.Tests
         }
 
         [Fact]
-        public void ParseHexByte ()
+        public void ParseHexByte()
         {
             Assert.Equal(90, Parsers.HexByte.End().Parse(@"\x5a"));
         }
 
         [Fact]
-        public void ParseUtf8Char ()
+        public void ParseUtf8Char()
         {
             // https://stackoverflow.com/questions/602912/how-do-you-echo-a-4-digit-unicode-character-in-bash
             // printf '\xE2\x98\xA0'
@@ -111,7 +111,7 @@ namespace DotNetEnv.Tests
         }
 
         [Fact]
-        public void ParseUtf16Char ()
+        public void ParseUtf16Char()
         {
             Assert.Equal("®", Parsers.Utf16Char.End().Parse(@"\u00ae"));
             Assert.Equal("®", Parsers.Utf16Char.End().Parse(@"\uae"));
@@ -120,7 +120,7 @@ namespace DotNetEnv.Tests
         }
 
         [Fact]
-        public void ParseUtf32Char ()
+        public void ParseUtf32Char()
         {
             Assert.Equal(RocketChar, Parsers.Utf32Char.End().Parse(@"\U0001F680"));
             Assert.Equal(RocketChar, Parsers.Utf32Char.End().Parse(@"\U1F680"));
@@ -130,7 +130,7 @@ namespace DotNetEnv.Tests
         }
 
         [Fact]
-        public void ParseEscapedChar ()
+        public void ParseEscapedChar()
         {
             Assert.Equal("\b", Parsers.EscapedChar.End().Parse("\\b"));
             Assert.Equal("'", Parsers.EscapedChar.End().Parse("\\'"));
@@ -139,14 +139,14 @@ namespace DotNetEnv.Tests
         }
 
         [Fact]
-        public void ParseInterpolatedEnvVar ()
+        public void ParseInterpolatedEnvVar()
         {
             Assert.Equal("ENV value", Parsers.InterpolatedEnvVar.End().Parse("$ENVVAR_TEST").GetValue());
             Assert.Equal("ENV value", Parsers.InterpolatedBracesEnvVar.End().Parse("${ENVVAR_TEST}").GetValue());
         }
 
         [Fact]
-        public void ParseInterpolated ()
+        public void ParseInterpolated()
         {
             Assert.Equal("ENV value", Parsers.InterpolatedValue.End().Parse("$ENVVAR_TEST").GetValue());
             Assert.Equal("ENV value", Parsers.InterpolatedValue.End().Parse("${ENVVAR_TEST}").GetValue());
@@ -154,7 +154,7 @@ namespace DotNetEnv.Tests
         }
 
         [Fact]
-        public void ParseNotControlNorWhitespace ()
+        public void ParseNotControlNorWhitespace()
         {
             Assert.Equal("a", Parsers.NotControlNorWhitespace(EXCEPT_CHARS).End().Parse("a"));
             Assert.Equal("%", Parsers.NotControlNorWhitespace(EXCEPT_CHARS).End().Parse("%"));
@@ -166,7 +166,7 @@ namespace DotNetEnv.Tests
         }
 
         [Fact]
-        public void ParseSpecialChar ()
+        public void ParseSpecialChar()
         {
             Assert.Equal("Z", Parsers.SpecialChar.End().Parse(@"\x5A"));
             Assert.Equal("®", Parsers.SpecialChar.End().Parse(@"\xc2\xae"));
@@ -203,7 +203,7 @@ namespace DotNetEnv.Tests
         }
 
         [Fact]
-        public void ParseComment ()
+        public void ParseComment()
         {
             Assert.Equal(" comment 1", Parsers.Comment.End().Parse("# comment 1"));
             Assert.Equal("", Parsers.Comment.End().Parse("#"));
@@ -211,7 +211,7 @@ namespace DotNetEnv.Tests
         }
 
         [Fact]
-        public void ParseEmpty ()
+        public void ParseEmpty()
         {
             var kvp = new KeyValuePair<string, string>(null, null);
 
@@ -229,14 +229,14 @@ namespace DotNetEnv.Tests
         }
 
         [Fact]
-        public void ParseUnquotedValue ()
+        public void ParseUnquotedValue()
         {
             Assert.Equal("abc", Parsers.UnquotedValue.End().Parse("abc").Value);
             Assert.Equal("a b c", Parsers.UnquotedValue.End().Parse("a b c").Value);
             Assert.Equal("041", Parsers.UnquotedValue.End().Parse("041").Value);
             Assert.Equal("日本", Parsers.UnquotedValue.End().Parse("日本").Value);
             // TODO: is it possible to get the system to recognize when a complete unicode char is present and start the next one then, without a space?
-//            Assert.Equal("日本", Parsers.UnquotedValue.Parse(@"\xe6\x97\xa5\xe6\x9c\xac"));
+            //            Assert.Equal("日本", Parsers.UnquotedValue.Parse(@"\xe6\x97\xa5\xe6\x9c\xac"));
 
             Assert.Throws<ParseException>(() => Parsers.UnquotedValue.End().Parse("0\n1"));
             Assert.Throws<ParseException>(() => Parsers.UnquotedValue.End().Parse("'"));
@@ -263,7 +263,7 @@ namespace DotNetEnv.Tests
         }
 
         [Fact]
-        public void ParseDoubleQuotedValueContents ()
+        public void ParseDoubleQuotedValueContents()
         {
             Assert.Equal("abc", Parsers.DoubleQuotedValueContents.End().Parse("abc").Value);
             Assert.Equal("a b c", Parsers.DoubleQuotedValueContents.End().Parse("a b c").Value);
@@ -278,7 +278,7 @@ namespace DotNetEnv.Tests
         }
 
         [Fact]
-        public void ParseSingleQuotedValueContents ()
+        public void ParseSingleQuotedValueContents()
         {
             Assert.Equal("abc", Parsers.SingleQuotedValueContents.End().Parse("abc").Value);
             Assert.Equal("a b c", Parsers.SingleQuotedValueContents.End().Parse("a b c").Value);
@@ -292,7 +292,7 @@ namespace DotNetEnv.Tests
         }
 
         [Fact]
-        public void ParseSingleQuotedValue ()
+        public void ParseSingleQuotedValue()
         {
             Assert.Equal("abc", Parsers.SingleQuotedValue.End().Parse("'abc'").Value);
             Assert.Equal("a b c", Parsers.SingleQuotedValue.End().Parse("'a b c'").Value);
@@ -305,7 +305,7 @@ namespace DotNetEnv.Tests
         }
 
         [Fact]
-        public void ParseDoubleQuotedValue ()
+        public void ParseDoubleQuotedValue()
         {
             Assert.Equal("abc", Parsers.DoubleQuotedValue.End().Parse("\"abc\"").Value);
             Assert.Equal("a b c", Parsers.DoubleQuotedValue.End().Parse("\"a b c\"").Value);
@@ -317,7 +317,7 @@ namespace DotNetEnv.Tests
         }
 
         [Fact]
-        public void ParseValue ()
+        public void ParseValue()
         {
             Assert.Equal("abc", Parsers.Value.End().Parse("abc").Value);
             Assert.Equal("a b c", Parsers.Value.End().Parse("a b c").Value);
@@ -326,7 +326,7 @@ namespace DotNetEnv.Tests
             Assert.Equal("041", Parsers.Value.End().Parse("041").Value);
             Assert.Equal("日本", Parsers.Value.End().Parse("日本").Value);
             // TODO: is it possible to get the system to recognize when a complete unicode char is present and start the next one then, without a space?
-//            Assert.Equal("日本", Parsers.Value.End().Parse(@"\xe6\x97\xa5\xe6\x9c\xac"));
+            //            Assert.Equal("日本", Parsers.Value.End().Parse(@"\xe6\x97\xa5\xe6\x9c\xac"));
 
             Assert.Throws<ParseException>(() => Parsers.Value.End().Parse("0\n1"));
             Assert.Throws<ParseException>(() => Parsers.Value.Parse(" "));
@@ -356,7 +356,7 @@ namespace DotNetEnv.Tests
         }
 
         [Fact]
-        public void ParseAssignment ()
+        public void ParseAssignment()
         {
             Action<string, string, string> testParse = (key, value, input) =>
             {
@@ -382,7 +382,7 @@ namespace DotNetEnv.Tests
             Assert.Null(Environment.GetEnvironmentVariable("EV_DNE"));
 
             // TODO: is it possible to get the system to recognize when a complete unicode char is present and start the next one then, without a space?
-//            Assert.Equal("EV_DNE=日本", Parsers.Assignment.End().Parse(@"EV_DNE=\xe6\x97\xa5\xe6\x9c\xac"));
+            //            Assert.Equal("EV_DNE=日本", Parsers.Assignment.End().Parse(@"EV_DNE=\xe6\x97\xa5\xe6\x9c\xac"));
 
             Assert.Throws<ParseException>(() => Parsers.Assignment.End().Parse("EV_DNE='"));
             Assert.Throws<ParseException>(() => Parsers.Assignment.End().Parse("EV_DNE=0\n1"));
@@ -436,7 +436,7 @@ namespace DotNetEnv.Tests
         }
 
         [Fact]
-        public void ParseDotenvFile ()
+        public void ParseDotenvFile()
         {
             Action<KeyValuePair<string, string>[], string> testParse = (expecteds, input) =>
             {
@@ -455,7 +455,7 @@ namespace DotNetEnv.Tests
             KeyValuePair<string, string>[] expecteds;
 
             contents = @"";
-            expecteds = new KeyValuePair<string, string>[] {};
+            expecteds = new KeyValuePair<string, string>[] { };
             testParse(expecteds, contents);
 
             contents = @"EV_DNE=abc";
