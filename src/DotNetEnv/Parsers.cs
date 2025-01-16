@@ -8,18 +8,18 @@ namespace DotNetEnv
 {
     class Parsers
     {
-        public static KeyValuePair<string, string> SetEnvVar (KeyValuePair<string, string> kvp)
+        public static KeyValuePair<string, string> SetEnvVar(KeyValuePair<string, string> kvp)
         {
             Environment.SetEnvironmentVariable(kvp.Key, kvp.Value);
             return kvp;
         }
 
-        public static KeyValuePair<string, string> DoNotSetEnvVar (KeyValuePair<string, string> kvp)
+        public static KeyValuePair<string, string> DoNotSetEnvVar(KeyValuePair<string, string> kvp)
         {
             return kvp;
         }
 
-        public static KeyValuePair<string, string> NoClobberSetEnvVar (KeyValuePair<string, string> kvp)
+        public static KeyValuePair<string, string> NoClobberSetEnvVar(KeyValuePair<string, string> kvp)
         {
             if (Environment.GetEnvironmentVariable(kvp.Key) == null)
             {
@@ -40,7 +40,7 @@ namespace DotNetEnv
 
         private const string EscapeChars = "abfnrtv\\'\"?$`";
 
-        private static string ToEscapeChar (char escapedChar)
+        private static string ToEscapeChar(char escapedChar)
         {
             switch (escapedChar)
             {
@@ -67,23 +67,23 @@ namespace DotNetEnv
             from c in Parse.AnyChar
             select ToEscapeChar(c);
 
-        private static byte ToOctalByte (string value)
+        private static byte ToOctalByte(string value)
         {
             return Convert.ToByte(value, 8);
         }
 
-        private static byte ToHexByte (string value)
+        private static byte ToHexByte(string value)
         {
             return Convert.ToByte(value, 16);
         }
 
-        private static string ToUtf8Char (IEnumerable<byte> value)
+        private static string ToUtf8Char(IEnumerable<byte> value)
         {
             return Encoding.UTF8.GetString(value.ToArray());
         }
 
         // https://stackoverflow.com/questions/311165/how-do-you-convert-a-byte-array-to-a-hexadecimal-string-and-vice-versa/311179#311179
-        private static byte[] StringToByteArray (String hex, int len)
+        private static byte[] StringToByteArray(String hex, int len)
         {
             hex = hex.PadLeft(len, '0');
             byte[] bytes = new byte[len / 2];
@@ -93,12 +93,12 @@ namespace DotNetEnv
             return bytes;
         }
 
-        private static string ToUtf16Char (string hex)
+        private static string ToUtf16Char(string hex)
         {
             return Encoding.Unicode.GetString(StringToByteArray(hex, 4));
         }
 
-        private static string ToUtf32Char (string hex)
+        private static string ToUtf32Char(string hex)
         {
             return Encoding.UTF32.GetString(StringToByteArray(hex, 8));
         }
@@ -133,7 +133,7 @@ namespace DotNetEnv
             from value in Parse.Repeat(Hex, 2, 8).Text()
             select ToUtf32Char(value);
 
-        internal static Parser<string> NotControlNorWhitespace (string exceptChars) =>
+        internal static Parser<string> NotControlNorWhitespace(string exceptChars) =>
             Parse.Char(
                 c => !char.IsControl(c) && !char.IsWhiteSpace(c) && !exceptChars.Contains(c),
                 $"not control nor whitespace nor {exceptChars}"
@@ -268,10 +268,11 @@ namespace DotNetEnv
             from _lt in Parse.LineTerminator
             select new KeyValuePair<string, string>(null, null);
 
-        public static IEnumerable<KeyValuePair<string, string>> ParseDotenvFile (
+        public static IEnumerable<KeyValuePair<string, string>> ParseDotenvFile(
             string contents,
             Func<KeyValuePair<string, string>, KeyValuePair<string, string>> tranform
-        ) {
+        )
+        {
             return Assignment.Select(tranform).Or(Empty).AtLeastOnce().End()
                 .Parse(contents).Where(kvp => kvp.Key != null);
         }
