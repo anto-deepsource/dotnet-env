@@ -7,7 +7,7 @@ namespace DotNetEnvTraverse.Tests
 {
     public class TraverseTests
     {
-        public TraverseTests ()
+        public TraverseTests()
         {
             Environment.SetEnvironmentVariable("TEST", null);
             Environment.SetEnvironmentVariable("NAME", null);
